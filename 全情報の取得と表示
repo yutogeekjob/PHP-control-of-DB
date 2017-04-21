@@ -1,0 +1,27 @@
+<?php
+try {
+  $pdo_object=new PDO('mysql:host=localhost;dbname=p;charset=utf8','yuiyuigahama','0618');
+  echo "connection sucessful";
+
+  $sql="INSERT INTO profiles(profilesID,name,age,tell,birthday)
+  VALUES(:profilesID,:name,:age,:tell,:birthday)";
+
+  $query= $pdo_object->prepare($sql);
+
+  $query->bindValue(':name','由比ヶ浜結衣');
+  $query->bindValue(':age',29);
+  $query->bindValue(':tell',"NF");
+  $query->bindValue(':birthday','19940618');
+  $query->bindValue(':profilesID',11);
+
+  $sql="SELECT*FROM profiles";
+  $query= $pdo_object->prepare($sql);
+  $query-> execute();
+  $result=$query->fetchall(PDO::FETCH_ASSOC);
+  print_r($result);
+
+  $pdo_object=null;
+} catch (PDOException $Exception) {
+  die('接続に失敗しました:'.$Exception->getMessage());
+}
+?>
