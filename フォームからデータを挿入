@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <title></title>
+ </head>
+ <body>
+  <form action="./pdo.php" method="post">
+    <a>名前を入力して</a>
+    <br><input type="text" name="txtName"></br>
+   <input type="submit" name="btnSubmit">
+  </from>
+ </body>
+</html>
+<?php
+try {
+  $pdo_object=new PDO('mysql:host=localhost;dbname=p;charset=utf8','yuiyuigahama','0618');
+
+  $textbox=$_POST['txtName'];
+  $sql="INSERT INTO profiles(name)
+  VALUES(:name)";
+
+  $query= $pdo_object->prepare($sql);
+
+  $query->bindValue(':name',$textbox);
+
+  $query-> execute();
+  $result=$query->fetchall(PDO::FETCH_ASSOC);
+  print_r($result);
+
+  $pdo_object=null;
+} catch (PDOException $Exception) {
+  die('接続に失敗しました:'.$Exception->getMessage());
+}
+?>
