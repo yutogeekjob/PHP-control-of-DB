@@ -1,0 +1,75 @@
+<html>
+ <head>
+  <title></title>
+ </head>
+ <body>
+  <form action="./pdofinal2.php" method="post">
+    <select name="week">
+    <option value="月曜日">月曜日</option>
+    <option value="火曜日">火曜日</option>
+    <option value="水曜日">水曜日</option>
+    <option value="木曜日">木曜日</option>
+    <option value="金曜日">金曜日</option>
+    </select>
+    <select name="time">
+    <option value="１限">１限</option>
+    <option value="２限">２限</option>
+    <option value="３限">３限</option>
+    </select>
+    <a>科目名</a>
+    <input type="text" name="subject">
+    <a>担当者</a>
+    <input type="text" name="teacher">
+    <input type="submit" name="btnSubmit">
+    <input type="submit" name="tots" value="時間割を見る">
+  </from>
+  <?php
+  try {
+    $pdo_object=new PDO('mysql:host=localhost;dbname=p;charset=utf8','yuiyuigahama','0618');
+
+  $time=$_POST["time"];
+  $week=$_POST["week"];
+  $subject=$_POST["subject"];
+  $teacher=$_POST["teacher"];
+  if($subject!=null && $teacher!=null){
+  $sql="INSERT INTO timeschedule(time,week,subject,teacher) VALUES(:time,:week,:subject,:teacher)";
+  $query= $pdo_object->prepare($sql);
+  $query->bindValue(':time',$time);
+  $query->bindValue(':week',$week);
+  $query->bindValue(':subject',$subject);
+  $query->bindValue(':teacher',$teacher);
+  $query->execute();
+  $sql="SELECT*FROM timeschedule
+  where time=:time and week =:week and subject=:subject and teacher=:teacher";
+  $query= $pdo_object->prepare($sql);
+  $query->bindValue(':time',$time);
+  $query->bindValue(':week',$week);
+  $query->bindValue(':subject',$subject);
+  $query->bindValue(':teacher',$teacher);
+  $query-> execute();
+  $result=$query->fetchall(PDO::FETCH_ASSOC);
+  if($result!=null){
+    echo "    "."<br>";
+    echo "登録できました。"."<br>";
+    foreach ($result as $value){
+        echo "{$value["week"]}";
+        echo "{$value["time"]}"."<br>";
+        echo "科目名:{$value["subject"]}"."<br>";
+        echo "担当者:{$value["teacher"]}"."<br>";
+        echo "<br>";
+     }
+  }
+}
+  $pdo_object=null;
+ } catch (PDOException $Exception) {
+   die('接続に失敗しました:'.$Exception->getMessage());
+ }
+  ?>
+  <?php
+  $tots=$_POST['tots'];
+  if($tots!=null){
+    header("Location:./pdofinal.php");
+  }
+   ?>
+ </body>
+</html>
