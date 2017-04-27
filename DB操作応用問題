@@ -1,0 +1,59 @@
+<html>
+ <head>
+  <title></title>
+ </head>
+ <body>
+  <form action="./pdofinal.php" method="post">
+   <input type="submit" name="btnSubmit" value="入力フォームへ">
+  <table>
+  <?php
+  $weeklist=array("月曜日","火曜日","水曜日","木曜日","金曜日");
+  $timelist=array("１限","２限","３限");
+  try {
+    $pdo_object=new PDO('mysql:host=localhost;dbname=p;charset=utf8','yuiyuigahama','0618');
+    for($j=0;$j<5;$j++){
+      for($i=0;$i<3;$i++){
+    $time=$timelist[$i];
+    $week=$weeklist[$j];
+    $sql="SELECT*FROM timeschedule
+    where time=:time and week=:week";
+    $query= $pdo_object->prepare($sql);
+    $query->bindValue(':time',$time);
+    $query->bindValue(':week',$week);
+    $query-> execute();
+    $result=$query->fetchall(PDO::FETCH_ASSOC);
+    $count=0;
+    if($result!=null){
+      foreach ($result as $value){
+        if($i==0 && $count<1){
+          echo "<tr>";
+        }
+          echo "<td>";
+          echo "{$value["week"]}";
+          echo "{$value["time"]}"."<br>";
+          echo "科目名:{$value["subject"]}"."<br>";
+          echo "担当者:{$value["teacher"]}"."<br>";
+          echo "</td>";
+          $count+=1;
+        }
+        if($i==2){
+          echo"</tr>";
+        }
+       }
+    }
+   }
+    $pdo_object=null;
+  } catch (PDOException $Exception) {
+    die('接続に失敗しました:'.$Exception->getMessage());
+  }
+  ?>
+</table>
+  <?php
+  $toform=$_POST['btnSubmit'];
+  if($toform!=null){
+    header("Location:./pdofinal2.php");
+  }
+   ?>
+</form>
+ </body>
+</html>
